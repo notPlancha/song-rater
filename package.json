@@ -1,0 +1,21 @@
+{
+  "name": "song-rater",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "spicetify-creator",
+    "build-local": "spicetify-creator --out=dist --minify",
+    "watch": "spicetify-creator --watch"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.0.1",
+    "@types/react-dom": "^18.0.0",
+    "spicetify-creator": "^1.0.10"
+  },
+  "dependencies": {
+    "arrive": "^2.4.1",
+    "spcr-settings": "^1.0.2",
+    "umbrellajs": "^3.3.1"
+  }
+}
