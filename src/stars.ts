@@ -5,6 +5,7 @@ var arrive = require("arrive");
 export class Stars{
     static emptyStar = "☆";
     static fullStar = "★";
+    static localStorageid = "song-rater-track-";
     private uPMain: any;
     private starMax : number;
     private uSpansStars : Array<any>;
@@ -18,7 +19,21 @@ export class Stars{
         this.currentSongUri = Spicetify.Queue.track.uri ?? null;
         Spicetify.Player.addEventListener("songchange", (event) => {
             let track = Stars.songUriFromSongChangeEvent(event);
-            //here is the stars changing auto
+            if (track == null) {
+                //if debug
+                Spicetify.PopupModal.display({
+                    content: "track is null",
+                    isLarge: true,
+                    title: "Error"
+                })
+                return
+            }else{
+                this.currentSongUri = track;
+                let rating = Stars.getSongRating(track)
+                if (!isNaN(rating)){
+                    this.setRating(rating)
+                }
+            }
         });
     }
     addStar(){
@@ -50,11 +65,11 @@ export class Stars{
         }
 
     }
-    static getSongRating(song : string){
-        return Number(Spicetify.LocalStorage.get("song-rater_" + song));
+    static getSongRating(trackUri : string){
+        return Number(Spicetify.LocalStorage.get(Stars.localStorageid + trackUri));
     }
-    static setSongRating(song : string, rating : number){
-        Spicetify.LocalStorage.set("song-rater_" + song, rating.toString());
+    static setSongRating(trackUri : string, rating : number){
+        Spicetify.LocalStorage.set(Stars.localStorageid + trackUri, rating.toString());
     }
     static getCurrentSongUri(){
         return Spicetify.Queue.track.contextTrack.uri ?? null;
