@@ -71,7 +71,7 @@ export class Stars{
     static setSongRating(trackUri : string, rating : number){
         Spicetify.LocalStorage.set(Stars.localStorageid + trackUri, rating.toString());
     }
-    static getCurrentSongUri(){
+    static getCurrentSongUri(){ //TODO check return type
         return Spicetify.Queue.track.contextTrack.uri ?? null;
     }
     static songUriFromSongChangeEvent(event : (Event & {data: Spicetify.PlayerState}) | undefined){

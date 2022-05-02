@@ -1,3 +1,1 @@
-call npm run build-local
-call npm run build
-call spicetify apply
+call npm run build && call spicetify apply enable-devtools && call npm run build-local
