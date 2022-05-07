@@ -1,8 +1,13 @@
 import { SettingsSection } from "spcr-settings"; //settings aren't working for now, implement later
+//todo add option to reset all ratings
+//todo also make it so it's recorded on seperate file?
+//todo also add import and export
 // @ts-ignore
 import u from "umbrellajs";
 var arrive = require("arrive");
 import { Stars } from "./stars"
+import * as path from "path";
+import { SongFromElement } from "./SongFromElement"
 async function main() {
 
   while (!Spicetify?.PopupModal || !Spicetify?.Platform) {
@@ -23,7 +28,12 @@ async function main() {
     placeToPut.append(newDiv);
   })
   Spicetify.Platform.History.listen(async ( {pathname} : {pathname : string}) => {
-    console.log(pathname);
+    if(Spicetify.URI.isPlaylistV1OrV2(pathname) || Spicetify.URI.isAlbum(pathname)){
+
+      console.log(new SongFromElement(pathname));
+    }else{
+      console.log(pathname + " is not a playlist or album");
+    }
   })
   // @ts-ignore
   document.arrive(selectorSong, {existing: true, onceOnly: false}, (element : HTMLElement) => {//change if becomes resource heavy

@@ -1,17 +1,23 @@
 // @ts-ignore
 import u from "umbrellajs";
 var arrive = require("arrive");
+import { getStorage } from '@sifrr/storage';
 
 export class Stars{
+    static storage = getStorage({
+        name: 'songRaterDb',
+        description: 'Song Rater Database',
+        ttl:0
+    });
     static emptyStar = "☆";
     static fullStar = "★";
-    static localStorageid = "song-rater-track-";
     private uPMain: any;
     private starMax : number;
     private uSpansStars : Array<any>;
     currentRating : number;
     currentSongUri : string | null;
     constructor(uP : any) {
+        console.log(Stars.storage.type);//TODO remove
         this.uPMain = uP;
         this.starMax = 0;
         this.uSpansStars = [];
@@ -29,9 +35,9 @@ export class Stars{
                 return
             }else{
                 this.currentSongUri = track;
-                let rating = Stars.getSongRating(track)
+                let rating = Stars.getSongRating(track);
                 if (!isNaN(rating)){
-                    this.setRating(rating)
+                    this.setRating(rating);
                 }
             }
         });
@@ -65,11 +71,21 @@ export class Stars{
         }
 
     }
-    static getSongRating(trackUri : string){
-        return Number(Spicetify.LocalStorage.get(Stars.localStorageid + trackUri));
+    static async getSongRating(trackUri : string) : Promise<number>{
+        Stars.storage.get(trackUri).then((value) => {
+            if (isNaN(Number(value))){
+                return 0;
+            }else{
+                return Number(value);
+            }
+        }
     }
-    static setSongRating(trackUri : string, rating : number){
-        Spicetify.LocalStorage.set(Stars.localStorageid + trackUri, rating.toString());
+    static setSongRating(trackUri : string, rating : number) {
+        if (isNaN(rating) || rating == 0) {
+            Spicetify.LocalStorage.remove(Stars.localStorageid + trackUri);
+        } else {
+            Spicetify.LocalStorage.set(Stars.localStorageid + trackUri, rating.toString());
+        }
     }
     static getCurrentSongUri(){ //TODO check return type
         return Spicetify.Queue.track.contextTrack.uri ?? null;
